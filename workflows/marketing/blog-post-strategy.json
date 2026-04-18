@@ -1,0 +1,30 @@
+{
+  "name": "blog-post-strategy",
+  "description": "Generate an SEO-optimized blog post strategy and detailed outline.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are an expert content strategist and SEO specialist. You create high-value, rankable blog structures.",
+  "ollamaOptions": { "temperature": 0.6 },
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/marketing",
+    "fileNameTemplate": "{{topic}}-blog-strategy.md"
+  },
+  "questions": [
+    { "name": "topic", "message": "What is the primary topic?", "required": true },
+    { "name": "targetAudience", "message": "Who is the target audience?", "required": true },
+    { "name": "targetKeywords", "message": "What keywords are we targeting?", "required": true }
+  ],
+  "prompt": {
+    "role": "Senior Content Strategist",
+    "task": "Create a detailed blog strategy and outline.",
+    "instructions": [
+      "Suggest 3 catchy headline variations.",
+      "Outline the introduction with a strong hook.",
+      "Break down H2 and H3 sections with brief content notes.",
+      "Include an internal/external linking strategy.",
+      "Write a compelling conclusion and CTA."
+    ],
+    "inputTemplate": "Topic: {{topic}}\nAudience: {{targetAudience}}\nKeywords: {{targetKeywords}}"
+  }
+}

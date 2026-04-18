@@ -1,0 +1,27 @@
+{
+  "name": "swot-analysis",
+  "description": "Perform a SWOT analysis for a project or business.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a strategic business analyst. You provide insightful, evidence-based SWOT analysis.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/business",
+    "fileNameTemplate": "{{project}}-swot.md"
+  },
+  "questions": [
+    { "name": "project", "message": "What is the project or company?", "required": true },
+    { "name": "description", "message": "Give a brief description of the context:", "required": true }
+  ],
+  "prompt": {
+    "role": "Strategic Business Analyst",
+    "task": "Perform a detailed SWOT analysis.",
+    "instructions": [
+      "Identify internal Strengths and Weaknesses.",
+      "Identify external Opportunities and Threats.",
+      "Provide a summary of the current strategic position.",
+      "Suggest 3 actionable next steps based on the findings."
+    ],
+    "inputTemplate": "Context: {{project}}\nDescription: {{description}}"
+  }
+}

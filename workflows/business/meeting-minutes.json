@@ -1,0 +1,28 @@
+{
+  "name": "meeting-minutes",
+  "description": "Turn raw meeting notes into structured minutes and action items.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a professional administrative assistant and project coordinator. You write clear, action-oriented meeting summaries.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/business",
+    "fileNameTemplate": "{{meetingTitle}}-minutes.md"
+  },
+  "questions": [
+    { "name": "meetingTitle", "message": "What was the meeting title?", "required": true },
+    { "name": "attendees", "message": "Who attended?", "required": true },
+    { "name": "rawNotes", "message": "Paste your raw notes here:", "required": true }
+  ],
+  "prompt": {
+    "role": "Administrative Assistant",
+    "task": "Generate professional meeting minutes and action items.",
+    "instructions": [
+      "Summarize the main discussion points.",
+      "Create a clear list of decisions made.",
+      "List action items with owners and deadlines (if mentioned).",
+      "Format for easy reading and distribution."
+    ],
+    "inputTemplate": "Meeting: {{meetingTitle}}\nAttendees: {{attendees}}\nNotes:\n{{rawNotes}}"
+  }
+}

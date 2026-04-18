@@ -1,0 +1,39 @@
+{
+  "name": "research-and-outline",
+  "description": "Perform web research on a topic and then generate a detailed outline based on the findings.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a professional researcher and technical writer. Use the provided research data to create a comprehensive and accurate outline.",
+  "ollamaOptions": {
+    "temperature": 0.5
+  },
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/research",
+    "fileNameTemplate": "{{topic}}-outline.md"
+  },
+  "questions": [
+    {
+      "name": "topic",
+      "message": "What topic would you like to research?",
+      "required": true
+    }
+  ],
+  "tools": [
+    {
+      "type": "research",
+      "topicTemplate": "{{topic}}"
+    }
+  ],
+  "prompt": {
+    "role": "Senior Research Analyst",
+    "task": "Create a detailed outline for the following topic based on the provided research results.",
+    "instructions": [
+      "Analyze the research data carefully.",
+      "Identify key themes and sections.",
+      "Provide a logical flow for a long-form article or report.",
+      "Cite specific findings from the researchResult where relevant."
+    ],
+    "inputTemplate": "Topic: {{topic}}\n\nRESEARCH FINDINGS:\n{{researchResult}}"
+  }
+}

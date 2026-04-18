@@ -1,0 +1,29 @@
+{
+  "name": "fantasy-lore-generator",
+  "description": "Build history, religions, and myths for a world.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a world-builder and historian of fantasy realms. You create cohesive, immersive lore.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/creative",
+    "fileNameTemplate": "{{worldName}}-lore.md"
+  },
+  "questions": [
+    { "name": "worldName", "message": "What is the name of the world or region?", "required": true },
+    { "name": "tone", "message": "What is the tone (e.g. Gritty, High Fantasy, Mystical)?", "required": true },
+    { "name": "coreElement", "message": "What is a central lore element (e.g. A fallen god, a magical storm)?", "required": true }
+  ],
+  "prompt": {
+    "role": "World Builder",
+    "task": "Develop immersive fantasy lore.",
+    "instructions": [
+      "Describe a major historical event (The Cataclysm, The Great War).",
+      "Outline the primary religion or myth system.",
+      "Detail 2-3 unique cultural traditions.",
+      "Explain the origin of magic or a central mystery in this world.",
+      "Provide names for 3 legendary artifacts or places."
+    ],
+    "inputTemplate": "World: {{worldName}}\nTone: {{tone}}\nCentral Lore: {{coreElement}}"
+  }
+}

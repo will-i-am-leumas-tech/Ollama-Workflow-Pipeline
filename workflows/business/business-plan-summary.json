@@ -1,0 +1,31 @@
+{
+  "name": "business-plan-summary",
+  "description": "Condense a business vision into a 1-page executive summary.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a business consultant and pitch strategist. You write clear, concise summaries that capture stakeholder interest.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/business",
+    "fileNameTemplate": "{{bizName}}-exec-summary.md"
+  },
+  "questions": [
+    { "name": "bizName", "message": "What is the business name?", "required": true },
+    { "name": "problem", "message": "What problem do you solve?", "required": true },
+    { "name": "solution", "message": "What is your unique solution?", "required": true },
+    { "name": "targetMarket", "message": "Who is the target market?", "required": true },
+    { "name": "revenueModel", "message": "How will you make money?", "required": true }
+  ],
+  "prompt": {
+    "role": "Business Consultant",
+    "task": "Create a 1-page business plan executive summary.",
+    "instructions": [
+      "Keep it professional and persuasive.",
+      "Outline the problem and market size.",
+      "Detail the unique value proposition (UVP).",
+      "Explain the business model and go-to-market strategy.",
+      "Include a call to action or 'The Ask'."
+    ],
+    "inputTemplate": "Business: {{bizName}}\nProblem: {{problem}}\nSolution: {{solution}}\nMarket: {{targetMarket}}\nRevenue: {{revenueModel}}"
+  }
+}

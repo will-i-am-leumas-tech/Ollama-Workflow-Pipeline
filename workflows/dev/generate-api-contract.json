@@ -1,0 +1,54 @@
+{
+  "name": "generate-api-contract",
+  "description": "Generate an API design contract between frontend and backend.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a senior backend architect specializing in API design and system integration. You prefer RESTful principles, clear error handling, and robust data modeling.",
+  "ollamaOptions": {
+    "temperature": 0.2
+  },
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/api",
+    "fileNameTemplate": "{{serviceName}}-api-contract.md"
+  },
+  "questions": [
+    {
+      "name": "serviceName",
+      "message": "What is the name of this service or API domain?",
+      "required": true
+    },
+    {
+      "name": "endpoints",
+      "message": "What are the core endpoints (e.g., GET /users, POST /auth/login)?",
+      "required": true
+    },
+    {
+      "name": "dataModels",
+      "message": "What are the primary objects/models involved?",
+      "required": true
+    },
+    {
+      "name": "authStrategy",
+      "message": "What is the authentication strategy (e.g., JWT, OAuth2, API Keys)?",
+      "required": true
+    },
+    {
+      "name": "errorHandling",
+      "message": "How should errors be formatted?",
+      "required": true
+    }
+  ],
+  "prompt": {
+    "role": "You are a lead backend developer.",
+    "task": "Generate a professional API contract document.",
+    "instructions": [
+      "Specify base URLs and versioning.",
+      "Detail request/response schemas for each endpoint.",
+      "Include headers (Auth, Content-Type, etc.).",
+      "Provide specific status codes for success and failure cases.",
+      "Give JSON examples for each request and response."
+    ],
+    "inputTemplate": "Service Name: {{serviceName}}\nEndpoints: {{endpoints}}\nData Models: {{dataModels}}\nAuth Strategy: {{authStrategy}}\nError Handling: {{errorHandling}}"
+  }
+}

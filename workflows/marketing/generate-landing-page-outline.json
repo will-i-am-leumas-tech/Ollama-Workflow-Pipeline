@@ -1,0 +1,59 @@
+{
+  "name": "generate-landing-page-outline",
+  "description": "Generate a landing page content outline for a product or startup.",
+  "recommendedModel": "llama3",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/marketing",
+    "fileNameTemplate": "{{productName}}-landing-page.md"
+  },
+  "questions": [
+    {
+      "name": "productName",
+      "message": "What is the product name?",
+      "required": true
+    },
+    {
+      "name": "productDescription",
+      "message": "What does it do?",
+      "required": true
+    },
+    {
+      "name": "targetAudience",
+      "message": "Who is it for?",
+      "required": true
+    },
+    {
+      "name": "mainCTA",
+      "message": "What is the main CTA?",
+      "required": true
+    },
+    {
+      "name": "tone",
+      "message": "What tone should the landing page have?",
+      "required": true
+    },
+    {
+      "name": "includePricing",
+      "message": "Should pricing be included?",
+      "required": true
+    },
+    {
+      "name": "includeFAQ",
+      "message": "Should FAQ be included?",
+      "required": true
+    }
+  ],
+  "prompt": {
+    "role": "You are a conversion-focused copywriter and marketing strategist.",
+    "task": "Generate a comprehensive landing page outline.",
+    "instructions": [
+      "Include hero, features, social proof (placeholders), and CTA sections.",
+      "Address the target audience directly.",
+      "Maintain the requested tone throughout.",
+      "Include pricing and FAQ if requested."
+    ],
+    "inputTemplate": "Product: {{productName}}\nDescription: {{productDescription}}\nAudience: {{targetAudience}}\nCTA: {{mainCTA}}\nTone: {{tone}}\nInclude Pricing: {{includePricing}}\nInclude FAQ: {{includeFAQ}}"
+  }
+}

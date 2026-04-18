@@ -1,0 +1,64 @@
+{
+  "name": "generate-goal-md",
+  "description": "Generate a detailed goal.md file for a new coding project.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a senior product architect and coding scaffold planner. You specialize in creating practical, implementation-ready goal.md files.",
+  "ollamaOptions": {
+    "temperature": 0.7,
+    "repeat_penalty": 1.2
+  },
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/goals",
+    "fileNameTemplate": "{{projectName}}-goal.md"
+  },
+  "questions": [
+    {
+      "name": "projectName",
+      "message": "What is the project name?",
+      "required": true
+    },
+    {
+      "name": "projectType",
+      "message": "What type of project is this?",
+      "required": true
+    },
+    {
+      "name": "problemSolved",
+      "message": "What problem does it solve?",
+      "required": true
+    },
+    {
+      "name": "coreFeatures",
+      "message": "What are the core features?",
+      "required": true
+    },
+    {
+      "name": "stack",
+      "message": "What stack should be used?",
+      "required": true
+    },
+    {
+      "name": "includeTests",
+      "message": "Should tests be included?",
+      "required": true
+    },
+    {
+      "name": "includeFileTree",
+      "message": "Should the output include a file tree?",
+      "required": true
+    }
+  ],
+  "prompt": {
+    "role": "You are a senior product architect and coding scaffold planner.",
+    "task": "Generate a complete goal.md file for the described project.",
+    "instructions": [
+      "Write in markdown.",
+      "Be clear and structured.",
+      "Include core requirements, architecture, file structure, and tests.",
+      "Keep it practical and implementation-ready."
+    ],
+    "inputTemplate": "Project Name: {{projectName}}\nProject Type: {{projectType}}\nProblem Solved: {{problemSolved}}\nCore Features: {{coreFeatures}}\nStack: {{stack}}\nInclude Tests: {{includeTests}}\nInclude File Tree: {{includeFileTree}}"
+  }
+}

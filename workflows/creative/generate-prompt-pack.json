@@ -1,0 +1,54 @@
+{
+  "name": "generate-prompt-pack",
+  "description": "Generate a pack of reusable prompts for a specific business or workflow.",
+  "recommendedModel": "llama3",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/prompts",
+    "fileNameTemplate": "{{packPurpose}}-prompt-pack.md"
+  },
+  "questions": [
+    {
+      "name": "packPurpose",
+      "message": "What is the prompt pack for?",
+      "required": true
+    },
+    {
+      "name": "userType",
+      "message": "Who will use it?",
+      "required": true
+    },
+    {
+      "name": "promptCount",
+      "message": "How many prompts are needed?",
+      "required": true
+    },
+    {
+      "name": "tone",
+      "message": "What tone should the prompts have?",
+      "required": true
+    },
+    {
+      "name": "promptFormat",
+      "message": "What format should each prompt follow?",
+      "required": true
+    },
+    {
+      "name": "includeExamples",
+      "message": "Should examples be included?",
+      "required": true
+    }
+  ],
+  "prompt": {
+    "role": "You are an expert prompt engineer and workflow designer.",
+    "task": "Generate a collection of high-quality, reusable prompts.",
+    "instructions": [
+      "Ensure each prompt is self-contained and clear.",
+      "Include a title and use case for each prompt.",
+      "Follow the requested format strictly.",
+      "Add examples if requested."
+    ],
+    "inputTemplate": "Purpose: {{packPurpose}}\nUsers: {{userType}}\nCount: {{promptCount}}\nTone: {{tone}}\nFormat: {{promptFormat}}\nInclude Examples: {{includeExamples}}"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "seo-keyword-synthesizer",
+  "description": "Group and prioritize keywords from research data into clusters.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a senior SEO analyst. You excel at semantic grouping and keyword prioritization for maximum ROI.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/marketing",
+    "fileNameTemplate": "{{project}}-keyword-clusters.md"
+  },
+  "questions": [
+    { "name": "project", "message": "What project is this research for?", "required": true },
+    { "name": "rawKeywords", "message": "Enter your raw list of keywords (separated by commas or newlines):", "required": true }
+  ],
+  "prompt": {
+    "role": "Lead SEO Analyst",
+    "task": "Synthesize and cluster the provided keyword list.",
+    "instructions": [
+      "Group keywords into semantic clusters.",
+      "Assign a 'Priority' (High/Med/Low) based on likely commercial intent.",
+      "Suggest a primary 'Pillar' page for each cluster.",
+      "Identify potential 'Quick Win' keywords."
+    ],
+    "inputTemplate": "Project: {{project}}\nKeywords:\n{{rawKeywords}}"
+  }
+}

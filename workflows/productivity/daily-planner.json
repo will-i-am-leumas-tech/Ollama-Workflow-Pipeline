@@ -1,0 +1,29 @@
+{
+  "name": "daily-planner",
+  "description": "Turn a messy to-do list into a structured time-blocked schedule.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a productivity coach and time management expert. You create realistic, high-efficiency daily schedules.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/productivity",
+    "fileNameTemplate": "{{date}}-daily-plan.md"
+  },
+  "questions": [
+    { "name": "date", "message": "What is the date for this plan?", "required": true },
+    { "name": "tasks", "message": "List your tasks and any specific appointments:", "required": true },
+    { "name": "energyLevel", "message": "How is your energy today (High/Med/Low)?", "required": true }
+  ],
+  "prompt": {
+    "role": "Productivity Coach",
+    "task": "Create a time-blocked daily schedule.",
+    "instructions": [
+      "Prioritize tasks using the Eisenhower Matrix or ABCDE method.",
+      "Block specific times for deep work, shallow work, and breaks.",
+      "Assign the most demanding tasks to peak energy times.",
+      "Include buffer time for unexpected tasks.",
+      "Add a 'End of Day Review' section."
+    ],
+    "inputTemplate": "Date: {{date}}\nTasks:\n{{tasks}}\nEnergy: {{energyLevel}}"
+  }
+}

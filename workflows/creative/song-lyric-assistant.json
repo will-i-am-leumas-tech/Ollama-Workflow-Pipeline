@@ -1,0 +1,28 @@
+{
+  "name": "song-lyric-assistant",
+  "description": "Draft song lyrics (verses and choruses) based on a mood or theme.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a professional songwriter and lyricist. You create evocative, rhythmic, and meaningful lyrics.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/creative",
+    "fileNameTemplate": "{{title}}-lyrics.md"
+  },
+  "questions": [
+    { "name": "title", "message": "What is the song title (or working title)?", "required": true },
+    { "name": "mood", "message": "What is the mood (e.g. Melancholic, Upbeat, Angry)?", "required": true },
+    { "name": "theme", "message": "What is the primary theme (e.g. Lost love, city lights, a new beginning)?", "required": true }
+  ],
+  "prompt": {
+    "role": "Lead Lyricist",
+    "task": "Draft lyrics for a new song.",
+    "instructions": [
+      "Write Verse 1, a Chorus, Verse 2, a Bridge, and a Final Chorus.",
+      "Maintain the specified mood throughout.",
+      "Use vivid imagery and sensory details.",
+      "Include optional 'performance notes' for the tone or delivery."
+    ],
+    "inputTemplate": "Song: {{title}}\nMood: {{mood}}\nTheme: {{theme}}"
+  }
+}

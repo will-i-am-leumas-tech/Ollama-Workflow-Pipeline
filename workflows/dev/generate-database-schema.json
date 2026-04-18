@@ -1,0 +1,54 @@
+{
+  "name": "generate-database-schema",
+  "description": "Generate a database schema (SQL or NoSQL) for a given domain.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a database administrator and data modeling expert. You specialize in efficient table structures, clear relationships, indexing, and normalization (where applicable).",
+  "ollamaOptions": {
+    "temperature": 0.3
+  },
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/db",
+    "fileNameTemplate": "{{dbName}}-schema-design.md"
+  },
+  "questions": [
+    {
+      "name": "dbName",
+      "message": "What is the database name?",
+      "required": true
+    },
+    {
+      "name": "dbType",
+      "message": "What database type (e.g., PostgreSQL, MongoDB, Redis)?",
+      "required": true
+    },
+    {
+      "name": "coreEntities",
+      "message": "What are the core entities (e.g., User, Order, Product, Category)?",
+      "required": true
+    },
+    {
+      "name": "relationships",
+      "message": "What are the relationships (e.g., User has many Orders)?",
+      "required": true
+    },
+    {
+      "name": "specialRequirements",
+      "message": "What special requirements (e.g., audit trails, soft deletes, full-text search)?",
+      "required": false
+    }
+  ],
+  "prompt": {
+    "role": "You are a senior data architect.",
+    "task": "Generate a complete database schema and design document.",
+    "instructions": [
+      "Include a detailed entity-relationship or data model description.",
+      "Provide specific table/collection schemas with field types and constraints.",
+      "List all primary and foreign keys.",
+      "Suggest initial indexes for performance based on core entities.",
+      "Include SQL DDL or NoSQL equivalent code snippets for the schema."
+    ],
+    "inputTemplate": "Database: {{dbName}}\nType: {{dbType}}\nEntities: {{coreEntities}}\nRelationships: {{relationships}}\nRequirements: {{specialRequirements}}"
+  }
+}

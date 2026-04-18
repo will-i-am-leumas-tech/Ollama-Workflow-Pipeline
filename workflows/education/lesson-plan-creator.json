@@ -1,0 +1,29 @@
+{
+  "name": "lesson-plan-creator",
+  "description": "Build a structured 60-minute teaching guide for any topic.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a professional educator and instructional designer. You create engaging, age-appropriate lesson plans.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/education",
+    "fileNameTemplate": "{{topic}}-lesson-plan.md"
+  },
+  "questions": [
+    { "name": "topic", "message": "What is the lesson topic?", "required": true },
+    { "name": "targetAudience", "message": "Who is the target audience (e.g. 5th grade, adult learners)?", "required": true },
+    { "name": "objectives", "message": "What are the learning objectives?", "required": true }
+  ],
+  "prompt": {
+    "role": "Lead Educator",
+    "task": "Create a detailed 60-minute lesson plan.",
+    "instructions": [
+      "Include a 10-minute introduction and hook.",
+      "Break the middle 40 minutes into 2-3 specific activities.",
+      "Detail a 10-minute conclusion and assessment.",
+      "List required materials and any potential challenges.",
+      "Provide 3 follow-up or homework ideas."
+    ],
+    "inputTemplate": "Topic: {{topic}}\nAudience: {{targetAudience}}\nObjectives: {{objectives}}"
+  }
+}

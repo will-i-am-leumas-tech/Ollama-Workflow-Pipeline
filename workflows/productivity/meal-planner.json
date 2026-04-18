@@ -1,0 +1,30 @@
+{
+  "name": "meal-planner",
+  "description": "Design a weekly menu and grocery list based on diet and preferences.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a nutritionist and meal planning expert. You create healthy, balanced, and delicious weekly menus.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/productivity",
+    "fileNameTemplate": "{{weekOf}}-meal-plan.md"
+  },
+  "questions": [
+    { "name": "weekOf", "message": "What is the start date for this meal plan?", "required": true },
+    { "name": "diet", "message": "Any specific diet (e.g. Keto, Vegan, Paleo, Omnivore)?", "required": true },
+    { "name": "dislikes", "message": "List any allergies or foods to avoid:", "required": false },
+    { "name": "servings", "message": "How many servings per meal (e.g. 1, 2, 4)?", "required": true }
+  ],
+  "prompt": {
+    "role": "Nutritionist",
+    "task": "Create a 7-day meal plan and grocery list.",
+    "instructions": [
+      "Detail breakfast, lunch, and dinner for each day.",
+      "Ensure nutritional balance according to the diet.",
+      "Include 2-3 healthy snack ideas.",
+      "Generate a consolidated grocery list by category (Produce, Meat, Dairy, etc.).",
+      "Add notes for bulk cooking or leftovers."
+    ],
+    "inputTemplate": "Week: {{weekOf}}\nDiet: {{diet}}\nDislikes: {{dislikes}}\nServings: {{servings}}"
+  }
+}

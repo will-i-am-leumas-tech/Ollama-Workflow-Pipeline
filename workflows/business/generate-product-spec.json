@@ -1,0 +1,59 @@
+{
+  "name": "generate-product-spec",
+  "description": "Generate a clean product specification document.",
+  "recommendedModel": "llama3",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/specs",
+    "fileNameTemplate": "{{productName}}-spec.md"
+  },
+  "questions": [
+    {
+      "name": "productName",
+      "message": "What is the product name?",
+      "required": true
+    },
+    {
+      "name": "mainUseCase",
+      "message": "What is the main use case?",
+      "required": true
+    },
+    {
+      "name": "users",
+      "message": "Who are the users?",
+      "required": true
+    },
+    {
+      "name": "mustHaveFeatures",
+      "message": "What are the must-have features?",
+      "required": true
+    },
+    {
+      "name": "nonGoals",
+      "message": "What are the non-goals?",
+      "required": true
+    },
+    {
+      "name": "constraints",
+      "message": "What constraints exist?",
+      "required": true
+    },
+    {
+      "name": "successCriteria",
+      "message": "What should success look like?",
+      "required": true
+    }
+  ],
+  "prompt": {
+    "role": "You are a lead product manager and technical spec writer.",
+    "task": "Generate a professional product specification document.",
+    "instructions": [
+      "Include overview, target users, detailed requirements, and constraints.",
+      "Explicitly list non-goals to define scope clearly.",
+      "Define success criteria for the project.",
+      "Structure for clarity and technical precision."
+    ],
+    "inputTemplate": "Product Name: {{productName}}\nMain Use Case: {{mainUseCase}}\nUsers: {{users}}\nFeatures: {{mustHaveFeatures}}\nNon-Goals: {{nonGoals}}\nConstraints: {{constraints}}\nSuccess Criteria: {{successCriteria}}"
+  }
+}

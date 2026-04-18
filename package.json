@@ -1,0 +1,19 @@
+{
+  "name": "leumas-ollama-workflow-engine",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "runWorkflow.js",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "workflow": "node runWorkflow.js"
+  },
+  "dependencies": {
+    "inquirer": "^9.2.16",
+    "ollama-deep-researcher": "file:../../tools/ollama-research",
+    "slugify": "^1.6.6"
+  },
+  "devDependencies": {
+    "vitest": "^1.4.0"
+  }
+}

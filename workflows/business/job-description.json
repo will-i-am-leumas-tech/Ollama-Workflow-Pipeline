@@ -1,0 +1,29 @@
+{
+  "name": "job-description",
+  "description": "Generate a professional job description and hiring rubric.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a senior HR manager and recruitment specialist. You write inclusive, high-impact job descriptions.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/business",
+    "fileNameTemplate": "{{jobTitle}}-jd.md"
+  },
+  "questions": [
+    { "name": "jobTitle", "message": "What is the job title?", "required": true },
+    { "name": "department", "message": "What department is this for?", "required": true },
+    { "name": "mustHaves", "message": "List the must-have skills/experience:", "required": true },
+    { "name": "niceToHaves", "message": "List any nice-to-have skills:", "required": true }
+  ],
+  "prompt": {
+    "role": "Lead Recruiter",
+    "task": "Create a high-quality job description.",
+    "instructions": [
+      "Write a compelling 'About the Role' section.",
+      "Detail the core responsibilities.",
+      "List the required and preferred qualifications.",
+      "Provide a basic hiring rubric to evaluate candidates for this role."
+    ],
+    "inputTemplate": "Job Title: {{jobTitle}}\nDepartment: {{department}}\nMust-Haves: {{mustHaves}}\nNice-to-Haves: {{niceToHaves}}"
+  }
+}

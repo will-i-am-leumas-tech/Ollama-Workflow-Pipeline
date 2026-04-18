@@ -1,0 +1,29 @@
+{
+  "name": "email-marketing-sequence",
+  "description": "Draft a multi-part welcome or sales email drip campaign.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a conversion-focused email copywriter. You write subject lines that get opened and body copy that gets clicks.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/marketing",
+    "fileNameTemplate": "{{campaignName}}-email-sequence.md"
+  },
+  "questions": [
+    { "name": "campaignName", "message": "What is the campaign name?", "required": true },
+    { "name": "product", "message": "What is the product or offer?", "required": true },
+    { "name": "painPoints", "message": "What customer pain points are we solving?", "required": true },
+    { "name": "sequenceLength", "message": "How many emails (e.g. 3, 5, 7)?", "required": true }
+  ],
+  "prompt": {
+    "role": "Lead Copywriter",
+    "task": "Create an email marketing sequence.",
+    "instructions": [
+      "Write catchy subject lines for each email.",
+      "Outline the specific purpose for each email (e.g. Welcome, Problem, Solution, Logic, Proof).",
+      "Draft full body copy for each email.",
+      "Ensure a clear and compelling Call to Action (CTA) in every message."
+    ],
+    "inputTemplate": "Campaign: {{campaignName}}\nProduct: {{product}}\nPain Points: {{painPoints}}\nLength: {{sequenceLength}}"
+  }
+}

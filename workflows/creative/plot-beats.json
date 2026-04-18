@@ -1,0 +1,29 @@
+{
+  "name": "plot-beats",
+  "description": "Outline a story using a classic 3-act or Hero's Journey structure.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a senior story editor and narrative consultant. You create tight, compelling plot structures.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/creative",
+    "fileNameTemplate": "{{title}}-plot-beats.md"
+  },
+  "questions": [
+    { "name": "title", "message": "What is the story title?", "required": true },
+    { "name": "protagonist", "message": "Who is the main character?", "required": true },
+    { "name": "incitingIncident", "message": "What is the inciting incident?", "required": true }
+  ],
+  "prompt": {
+    "role": "Lead Screenwriter",
+    "task": "Create a detailed plot beat outline.",
+    "instructions": [
+      "Detail the Act 1 Setup and the first Plot Point.",
+      "Break down Act 2 (The Rising Action) into specific sequences.",
+      "Identify the Midpoint reversal or revelation.",
+      "Outline Act 3 (The Climax and Resolution).",
+      "Ensure each beat moves the character arc forward."
+    ],
+    "inputTemplate": "Title: {{title}}\nProtagonist: {{protagonist}}\nInciting Incident: {{incitingIncident}}"
+  }
+}

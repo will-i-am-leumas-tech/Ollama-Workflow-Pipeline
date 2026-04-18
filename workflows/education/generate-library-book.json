@@ -1,0 +1,60 @@
+{
+  "name": "generate-library-book",
+  "description": "Generate a structured book or long-form educational library entry.",
+  "recommendedModel": "llama3",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/library",
+    "fileNameTemplate": "{{title}}-book.md"
+  },
+  "questions": [
+    {
+      "name": "title",
+      "message": "What is the book title?",
+      "required": true
+    },
+    {
+      "name": "audience",
+      "message": "Who is the audience?",
+      "required": true
+    },
+    {
+      "name": "subject",
+      "message": "What is the subject?",
+      "required": true
+    },
+    {
+      "name": "tone",
+      "message": "What tone should it have?",
+      "required": true
+    },
+    {
+      "name": "chapterCount",
+      "message": "How many chapters?",
+      "required": true
+    },
+    {
+      "name": "includeExercises",
+      "message": "Should it include exercises?",
+      "required": true
+    },
+    {
+      "name": "difficulty",
+      "message": "Should it be beginner, intermediate, or advanced?",
+      "required": true
+    }
+  ],
+  "prompt": {
+    "role": "You are a professional educational author and domain expert.",
+    "task": "Generate a structured chapter outline and summary for a new library entry.",
+    "instructions": [
+      "Include a clear title.",
+      "Provide a compelling introduction.",
+      "List all chapter summaries.",
+      "Include exercises if requested.",
+      "Tailor the depth to the requested difficulty level."
+    ],
+    "inputTemplate": "Title: {{title}}\nAudience: {{audience}}\nSubject: {{subject}}\nTone: {{tone}}\nChapters: {{chapterCount}}\nInclude Exercises: {{includeExercises}}\nDifficulty: {{difficulty}}"
+  }
+}

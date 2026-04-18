@@ -1,0 +1,28 @@
+{
+  "name": "academic-paper-summarizer",
+  "description": "Extract key findings, methodology, and conclusions from academic texts.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a professional academic researcher and data analyst. You provide accurate, concise summaries of complex papers.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/education",
+    "fileNameTemplate": "{{title}}-summary.md"
+  },
+  "questions": [
+    { "name": "title", "message": "What is the title of the paper?", "required": true },
+    { "name": "paperContent", "message": "Paste the paper content or abstract here:", "required": true }
+  ],
+  "prompt": {
+    "role": "Academic Summarizer",
+    "task": "Summarize the provided academic text.",
+    "instructions": [
+      "Extract the core research question.",
+      "Detail the methodology used.",
+      "Summarize the key findings and data points.",
+      "Outline the conclusions and potential limitations.",
+      "List 3-5 key takeaways."
+    ],
+    "inputTemplate": "Paper: {{title}}\nContent:\n{{paperContent}}"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "social-media-calendar",
+  "description": "Plan a full week of social media posts for multiple platforms.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a social media manager and growth strategist. You create engaging, platform-specific content that drives interaction.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/marketing",
+    "fileNameTemplate": "{{campaign}}-sm-calendar.md"
+  },
+  "questions": [
+    { "name": "campaign", "message": "What is the campaign or theme?", "required": true },
+    { "name": "platforms", "message": "Which platforms (e.g. X, LinkedIn, Instagram)?", "required": true },
+    { "name": "goals", "message": "Primary goals (e.g. awareness, engagement, clicks)?", "required": true }
+  ],
+  "prompt": {
+    "role": "Social Media Manager",
+    "task": "Create a 7-day social media calendar.",
+    "instructions": [
+      "Provide a specific post for each day.",
+      "Vary content types (e.g. educational, question, promo, behind-the-scenes).",
+      "Include suggested hashtags and emojis.",
+      "Add notes for visual assets (e.g. images, reels, carousels)."
+    ],
+    "inputTemplate": "Campaign: {{campaign}}\nPlatforms: {{platforms}}\nGoals: {{goals}}"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "quiz-generator",
+  "description": "Create test questions and multiple-choice quizzes from a provided text.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a specialized test designer. You create fair, challenging, and accurate assessments.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/education",
+    "fileNameTemplate": "{{topic}}-quiz.md"
+  },
+  "questions": [
+    { "name": "topic", "message": "What is the quiz topic?", "required": true },
+    { "name": "sourceText", "message": "Paste the source text to generate questions from:", "required": true },
+    { "name": "qCount", "message": "How many questions (e.g. 5, 10, 15)?", "required": true }
+  ],
+  "prompt": {
+    "role": "Assessment Designer",
+    "task": "Generate a multiple-choice quiz.",
+    "instructions": [
+      "Provide {{qCount}} multiple-choice questions.",
+      "Include 4 options for each question (A, B, C, D).",
+      "Ensure only one correct answer.",
+      "List the correct answers at the bottom of the document.",
+      "Vary question difficulty (Easy, Medium, Hard)."
+    ],
+    "inputTemplate": "Topic: {{topic}}\nSource Material:\n{{sourceText}}"
+  }
+}

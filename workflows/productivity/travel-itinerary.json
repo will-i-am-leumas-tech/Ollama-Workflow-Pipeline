@@ -1,0 +1,30 @@
+{
+  "name": "travel-itinerary",
+  "description": "Plan a day-by-day trip itinerary for any destination.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a travel agent and expert guide. You create immersive, well-paced travel itineraries.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/productivity",
+    "fileNameTemplate": "{{destination}}-itinerary.md"
+  },
+  "questions": [
+    { "name": "destination", "message": "Where are you going (City, Country)?", "required": true },
+    { "name": "duration", "message": "How many days?", "required": true },
+    { "name": "interests", "message": "What are your interests (e.g. History, Food, Hiking, Relaxation)?", "required": true },
+    { "name": "budget", "message": "What is your budget (e.g. Budget, Mid-range, Luxury)?", "required": true }
+  ],
+  "prompt": {
+    "role": "Travel Agent",
+    "task": "Create a detailed day-by-day travel itinerary.",
+    "instructions": [
+      "Provide specific Morning, Afternoon, and Evening activities for each day.",
+      "Suggest local food specialties and top-rated restaurants for each day.",
+      "Include travel tips (transportation, safety, cultural etiquette).",
+      "List 3 'must-see' hidden gems in the destination.",
+      "Add a 'Packing List' section based on the destination and season."
+    ],
+    "inputTemplate": "Destination: {{destination}}\nDuration: {{duration}}\nInterests: {{interests}}\nBudget: {{budget}}"
+  }
+}

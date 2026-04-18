@@ -1,0 +1,29 @@
+{
+  "name": "character-bio",
+  "description": "Create deep backstories and character arcs for fiction.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are a professional novelist and screenwriting consultant. You create complex, multidimensional characters.",
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/creative",
+    "fileNameTemplate": "{{charName}}-bio.md"
+  },
+  "questions": [
+    { "name": "charName", "message": "What is the character's name?", "required": true },
+    { "name": "genre", "message": "What is the story genre (e.g. Sci-fi, Fantasy, Noir)?", "required": true },
+    { "name": "coreMotivation", "message": "What is their deepest motivation or fear?", "required": true }
+  ],
+  "prompt": {
+    "role": "Narrative Designer",
+    "task": "Develop a detailed character biography and arc.",
+    "instructions": [
+      "Provide a physical description and personality traits.",
+      "Detail their internal and external conflicts.",
+      "Outline their key relationships.",
+      "Create a compelling backstory and how it leads to the story's start.",
+      "Sketch a potential character arc (from 'The Wound' to 'The Change')."
+    ],
+    "inputTemplate": "Character: {{charName}}\nGenre: {{genre}}\nMotivation: {{coreMotivation}}"
+  }
+}

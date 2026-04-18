@@ -1,0 +1,55 @@
+{
+  "name": "outline-wireframe",
+  "description": "Generate a textual wireframe outline for a web or mobile screen.",
+  "recommendedModel": "llama3",
+  "systemPrompt": "You are an expert UI/UX designer and information architect. You excel at describing complex layouts in a clear, structured, and hierarchical text format.",
+  "ollamaOptions": {
+    "temperature": 0.4,
+    "top_p": 0.9
+  },
+  "output": {
+    "format": "markdown",
+    "extension": ".md",
+    "directory": "./outputs/wireframes",
+    "fileNameTemplate": "{{screenName}}-wireframe.md"
+  },
+  "questions": [
+    {
+      "name": "screenName",
+      "message": "What is the name of this screen (e.g., Dashboard, User Profile)?",
+      "required": true
+    },
+    {
+      "name": "platform",
+      "message": "Is this for Web, iOS, or Android?",
+      "required": true
+    },
+    {
+      "name": "corePurpose",
+      "message": "What is the primary goal of this screen?",
+      "required": true
+    },
+    {
+      "name": "keyElements",
+      "message": "What specific components must be included (e.g., search bar, data table, hero image)?",
+      "required": true
+    },
+    {
+      "name": "userActions",
+      "message": "What are the main actions a user should take here?",
+      "required": true
+    }
+  ],
+  "prompt": {
+    "role": "You are a senior UI/UX architect.",
+    "task": "Generate a detailed textual wireframe for the following screen.",
+    "instructions": [
+      "Use a structured hierarchy (Header, Main, Sidebar, Footer).",
+      "Describe component placement and relative sizing.",
+      "Specify content placeholders and interactive elements.",
+      "Detail the layout behavior (e.g., responsive grid, sticky elements).",
+      "Include a section for 'User Flow' transitions from this screen."
+    ],
+    "inputTemplate": "Screen Name: {{screenName}}\nPlatform: {{platform}}\nPurpose: {{corePurpose}}\nKey Elements: {{keyElements}}\nUser Actions: {{userActions}}"
+  }
+}

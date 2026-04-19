@@ -1,0 +1,39 @@
+{
+  "workflowName": "album-generator",
+  "stepId": "lyrics",
+  "model": "qwen2.5:7b",
+  "timestamp": "2026-04-19T06:48:53.247Z",
+  "context": {
+    "albumTitle": "Neon Dreams 2026",
+    "genre": "Synthwave",
+    "songCount": "2",
+    "planner": [
+      {
+        "title": "Sunset Nights",
+        "mood": "Energetic and nostalgic"
+      },
+      {
+        "title": "Future Classic",
+        "mood": "Optimistic and futuristic"
+      }
+    ],
+    "albumPlan": [
+      {
+        "title": "Sunset Nights",
+        "mood": "Energetic and nostalgic"
+      },
+      {
+        "title": "Future Classic",
+        "mood": "Optimistic and futuristic"
+      }
+    ],
+    "item": {
+      "title": "Future Classic",
+      "mood": "Optimistic and futuristic"
+    },
+    "index": 1,
+    "lyrics": "Certainly! Let's create some fantastic lyrics for your song. Could you please provide me with the specific details for the song, such as its title, mood, genre, album title, and whether it’s part of a series or not (including the index number and total count)? This will help me craft the perfect lyrics for your song."
+  },
+  "prompt": "ROLE:\nYou are a world-class songwriter.\n\nTASK:\nWrite lyrics for the song: {{item.title}}\n\nINSTRUCTIONS:\n- Mood: {{item.mood}}\n- Genre: {{genre}}\n- Album: {{albumTitle}}\n- Song {{index}} of {{songCount}}",
+  "outputFile": "D:\\Leumas\\opensource\\ollama-pipeline\\outputs\\albums\\neon-dreams-2026\\1-future-classic.md"
+}

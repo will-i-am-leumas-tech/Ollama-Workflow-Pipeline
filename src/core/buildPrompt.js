@@ -1,7 +1,7 @@
 import { renderTemplate } from './renderTemplate.js';
 
-export const buildPrompt = (workflow, answers) => {
-  const { prompt } = workflow;
+export const buildPrompt = (promptSource, answers) => {
+  const prompt = promptSource.prompt || promptSource;
   const sections = [];
 
   if (prompt.role) {

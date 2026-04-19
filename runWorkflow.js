@@ -18,7 +18,7 @@ const main = async () => {
     await runEngine(parsed.workflowName, {
       cliAnswers: parsed.set,
       askQuestionsFn: askQuestions,
-      confirmRunFn: confirmRun,
+      confirmRunFn: parsed.yes ? null : confirmRun,
       ollamaAdapter: ollamaAdapter,
       outputDirOverride: parsed.output,
       modelOverride: parsed.model

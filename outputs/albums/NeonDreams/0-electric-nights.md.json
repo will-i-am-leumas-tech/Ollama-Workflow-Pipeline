@@ -1,0 +1,39 @@
+{
+  "workflowName": "album-generator",
+  "stepId": "lyrics",
+  "model": "qwen2.5:7b",
+  "timestamp": "2026-04-19T06:48:02.029Z",
+  "context": {
+    "albumTitle": "NeonDreams",
+    "genre": "Synthwave",
+    "songCount": "2",
+    "planner": [
+      {
+        "title": "Electric Nights",
+        "mood": "Energetic and Futuristic"
+      },
+      {
+        "title": "Moonlit Drive",
+        "mood": "Mellow andnostalgic"
+      }
+    ],
+    "albumPlan": [
+      {
+        "title": "Electric Nights",
+        "mood": "Energetic and Futuristic"
+      },
+      {
+        "title": "Moonlit Drive",
+        "mood": "Mellow andnostalgic"
+      }
+    ],
+    "item": {
+      "title": "Electric Nights",
+      "mood": "Energetic and Futuristic"
+    },
+    "index": 0,
+    "lyrics": "Sure, let's start by filling in the details for your song. Please provide me with the title, mood, genre, album title, and the specific information about which song this is within the album (e.g., \"Song 1 of 5\"). This will help me craft the perfect lyrics for you!"
+  },
+  "prompt": "ROLE:\nYou are a world-class songwriter.\n\nTASK:\nWrite lyrics for the song: {{item.title}}\n\nINSTRUCTIONS:\n- Mood: {{item.mood}}\n- Genre: {{genre}}\n- Album: {{albumTitle}}\n- Song {{index}} of {{songCount}}",
+  "outputFile": "D:\\Leumas\\opensource\\ollama-pipeline\\outputs\\albums\\NeonDreams\\0-electric-nights.md"
+}

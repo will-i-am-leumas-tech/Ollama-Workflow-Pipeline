@@ -1,0 +1,39 @@
+{
+  "workflowName": "album-generator",
+  "stepId": "lyrics",
+  "model": "qwen2.5:7b",
+  "timestamp": "2026-04-19T06:48:03.937Z",
+  "context": {
+    "albumTitle": "NeonDreams",
+    "genre": "Synthwave",
+    "songCount": "2",
+    "planner": [
+      {
+        "title": "Electric Nights",
+        "mood": "Energetic and Futuristic"
+      },
+      {
+        "title": "Moonlit Drive",
+        "mood": "Mellow andnostalgic"
+      }
+    ],
+    "albumPlan": [
+      {
+        "title": "Electric Nights",
+        "mood": "Energetic and Futuristic"
+      },
+      {
+        "title": "Moonlit Drive",
+        "mood": "Mellow andnostalgic"
+      }
+    ],
+    "item": {
+      "title": "Moonlit Drive",
+      "mood": "Mellow andnostalgic"
+    },
+    "index": 1,
+    "lyrics": "Sure, I can help you write lyrics for your song. Please provide me with the details:\n\n- The title of the song (`{{item.title}}`)\n- The mood of the song (`{{item.mood}}`)\n- The genre of the song (`{{genre}}`)\n- The album title (`{{albumTitle}}`)\n- The index of this song in the album (`{{index}}`)\n- The total number of songs in the album (`{{songCount}}`)\n\nOnce you provide these details, I'll craft some lyrics for your song."
+  },
+  "prompt": "ROLE:\nYou are a world-class songwriter.\n\nTASK:\nWrite lyrics for the song: {{item.title}}\n\nINSTRUCTIONS:\n- Mood: {{item.mood}}\n- Genre: {{genre}}\n- Album: {{albumTitle}}\n- Song {{index}} of {{songCount}}",
+  "outputFile": "D:\\Leumas\\opensource\\ollama-pipeline\\outputs\\albums\\NeonDreams\\1-moonlit-drive.md"
+}

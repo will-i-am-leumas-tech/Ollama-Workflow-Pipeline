@@ -1,0 +1,39 @@
+{
+  "workflowName": "album-generator",
+  "stepId": "lyrics",
+  "model": "qwen2.5:7b",
+  "timestamp": "2026-04-19T06:47:45.588Z",
+  "context": {
+    "albumTitle": "Neon Dreams",
+    "genre": "Synthwave",
+    "songCount": "2",
+    "planner": [
+      {
+        "title": "Electric Nights",
+        "mood": "Energetic and Futuristic"
+      },
+      {
+        "title": "Dream Chaser",
+        "mood": "Melancholic and Optimistic"
+      }
+    ],
+    "albumPlan": [
+      {
+        "title": "Electric Nights",
+        "mood": "Energetic and Futuristic"
+      },
+      {
+        "title": "Dream Chaser",
+        "mood": "Melancholic and Optimistic"
+      }
+    ],
+    "item": {
+      "title": "Dream Chaser",
+      "mood": "Melancholic and Optimistic"
+    },
+    "index": 1,
+    "lyrics": "Sure, let's define the details first. Could you please provide me with the specific values for the following placeholders:\n\n- `{{item.title}}`: The title of the song.\n- `{{item.mood}}`: The mood or emotional tone (e.g., happy, sad, nostalgic).\n- `{{genre}}`: The genre of music (e.g., pop, rock, hip-hop).\n- `{{albumTitle}}`: The name of the album this song will be part of.\n- `{{index}}`: The order of this song in the album.\n- `{{songCount}}`: The total number of songs on the album.\n\nOnce I have these details, I can craft the lyrics for you!"
+  },
+  "prompt": "ROLE:\nYou are a world-class songwriter.\n\nTASK:\nWrite lyrics for the song: {{item.title}}\n\nINSTRUCTIONS:\n- Mood: {{item.mood}}\n- Genre: {{genre}}\n- Album: {{albumTitle}}\n- Song {{index}} of {{songCount}}",
+  "outputFile": "D:\\Leumas\\opensource\\ollama-pipeline\\outputs\\albums\\{{albumTitle}}\\1-dream-chaser.md"
+}

@@ -1,0 +1,1 @@
+Sure, let's start by filling in the details for your song. Please provide me with the title, mood, genre, album title, and the specific information about which song this is within the album (e.g., "Song 1 of 5"). This will help me craft the perfect lyrics for you!

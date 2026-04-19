@@ -7,6 +7,7 @@ import { writeResult } from '../output/writeResult.js';
 import { writeMetadata } from '../output/writeMetadata.js';
 import { getIsoTimestamp } from '../utils/timestamp.js';
 import { logger } from '../utils/logger.js';
+import { safeJsonParse } from '../utils/safeJson.js';
 
 export const runEngine = async (workflowName, options = {}) => {
   const {
@@ -29,7 +30,7 @@ export const runEngine = async (workflowName, options = {}) => {
     finalAnswers = { ...finalAnswers, ...answers };
   }
 
-  // Handle tools
+  // Handle tools (legacy support)
   if (workflow.tools && Array.isArray(workflow.tools)) {
     for (const tool of workflow.tools) {
       if (tool.type === 'research') {
@@ -49,51 +50,110 @@ export const runEngine = async (workflowName, options = {}) => {
   }
 
   const model = modelOverride || workflow.recommendedModel || 'llama3';
-  const prompt = buildPrompt(workflow, finalAnswers);
-  const systemPrompt = workflow.systemPrompt || '';
-  const ollamaOptions = workflow.ollamaOptions || {};
-  
-  const outputDir = outputDirOverride || workflow.output.directory || './outputs';
-  const fileName = renderTemplate(workflow.output.fileNameTemplate, finalAnswers);
-  const outputPath = buildOutputPath(outputDir, fileName, workflow.output.extension);
+  const internalState = { ...finalAnswers };
 
-  if (confirmRunFn) {
-    const confirmed = await confirmRunFn({
-      workflow: workflow.name,
-      model,
-      outputPath,
-      answers: finalAnswers,
-      prompt,
-      system: systemPrompt,
-      options: ollamaOptions
-    });
-    if (!confirmed) {
-      logger.info('Run cancelled by user.');
-      return;
+  const executeSteps = async (steps, currentContext) => {
+    for (const step of steps) {
+      if (step.type === 'loop') {
+        const list = currentContext[step.forEach] || [];
+        if (!Array.isArray(list)) {
+          logger.warn(`Loop target "${step.forEach}" is not an array. Skipping.`);
+          continue;
+        }
+        for (let index = 0; index < list.length; index++) {
+          const item = list[index];
+          const loopContext = { ...currentContext, item, index };
+          await executeSteps(step.steps, loopContext);
+        }
+      } else if (step.type === 'prompt' || !step.type) {
+        // Default to prompt if type is missing (for backward compatibility)
+        const prompt = buildPrompt(step.prompt || workflow, currentContext);
+        const systemPrompt = step.systemPrompt || workflow.systemPrompt || '';
+        const ollamaOptions = step.ollamaOptions || workflow.ollamaOptions || {};
+        
+        const outputConfig = step.output || workflow.output;
+        const outputDirRaw = outputDirOverride || outputConfig.directory || './outputs';
+        const outputDir = renderTemplate(outputDirRaw, currentContext);
+        const fileName = renderTemplate(outputConfig.fileNameTemplate, currentContext);
+        const outputPath = buildOutputPath(outputDir, fileName, outputConfig.extension);
+
+        if (confirmRunFn && !step.skipConfirm) {
+          const confirmed = await confirmRunFn({
+            workflow: workflow.name,
+            stepId: step.id,
+            model,
+            outputPath,
+            answers: currentContext,
+            prompt,
+            system: systemPrompt,
+            options: ollamaOptions
+          });
+          if (!confirmed) {
+            logger.info('Step cancelled by user.');
+            continue;
+          }
+        }
+
+        logger.info(`Generating step: ${step.id || 'main'}...`);
+        const result = await ollamaAdapter.runPrompt({ 
+          model, 
+          prompt, 
+          system: systemPrompt, 
+          options: ollamaOptions 
+        });
+
+        // Parse JSON if needed
+        let finalResult = result;
+        if (outputConfig.format === 'json') {
+          // Extract JSON from potential Markdown blocks
+          const jsonMatch = result.match(/```json\n([\s\S]*?)\n```/) || result.match(/```([\s\S]*?)```/);
+          const rawJson = jsonMatch ? jsonMatch[1] : result;
+          finalResult = safeJsonParse(rawJson, result);
+        }
+
+        // Save to state
+        if (step.id) {
+          currentContext[step.id] = finalResult;
+        }
+        if (outputConfig.saveAs) {
+          currentContext[outputConfig.saveAs] = finalResult;
+        }
+
+        // Only write to file if a fileNameTemplate is provided
+        if (outputConfig.fileNameTemplate) {
+          await writeResult(outputPath, typeof finalResult === 'string' ? finalResult : JSON.stringify(finalResult, null, 2));
+          
+          const metadata = {
+            workflowName: workflow.name,
+            stepId: step.id,
+            model,
+            timestamp: getIsoTimestamp(),
+            context: currentContext,
+            prompt,
+            outputFile: outputPath
+          };
+          
+          await writeMetadata(outputPath, metadata);
+          logger.success(`Saved to: ${outputPath}`);
+        }
+      }
     }
+  };
+
+  if (workflow.steps) {
+    await executeSteps(workflow.steps, internalState);
+  } else {
+    // Legacy support for single prompt workflows
+    const legacyStep = {
+      id: 'main',
+      type: 'prompt',
+      prompt: workflow.prompt,
+      output: workflow.output,
+      systemPrompt: workflow.systemPrompt,
+      ollamaOptions: workflow.ollamaOptions
+    };
+    await executeSteps([legacyStep], internalState);
   }
 
-  logger.info('Generating...');
-  const result = await ollamaAdapter.runPrompt({ 
-    model, 
-    prompt, 
-    system: systemPrompt, 
-    options: ollamaOptions 
-  });
-  
-  await writeResult(outputPath, result);
-  
-  const metadata = {
-    workflowName: workflow.name,
-    model,
-    timestamp: getIsoTimestamp(),
-    answers: finalAnswers,
-    prompt,
-    outputFile: outputPath
-  };
-  
-  await writeMetadata(outputPath, metadata);
-  
-  logger.success(`Saved to: ${outputPath}`);
-  return { outputPath, result, metadata };
+  return { state: internalState };
 };

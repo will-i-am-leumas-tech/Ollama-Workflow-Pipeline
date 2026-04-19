@@ -1,0 +1,68 @@
+{
+  "name": "album-generator",
+  "description": "Plan an album and generate lyrics for all songs.",
+  "recommendedModel": "llama3",
+  "questions": [
+    {
+      "name": "albumTitle",
+      "message": "What is the album title?",
+      "required": true
+    },
+    {
+      "name": "genre",
+      "message": "What is the genre?",
+      "required": true
+    },
+    {
+      "name": "songCount",
+      "message": "How many songs?",
+      "required": true
+    }
+  ],
+  "steps": [
+    {
+      "id": "planner",
+      "type": "prompt",
+      "prompt": {
+        "role": "You are a professional music producer.",
+        "task": "Plan an album with {{songCount}} songs. Return a JSON array of objects with 'title' and 'mood' keys.",
+        "instructions": [
+          "Return ONLY valid JSON.",
+          "Do not include any other text.",
+          "Format: [{\"title\": \"...\", \"mood\": \"...\"}, ...]"
+        ],
+        "inputTemplate": "Album Title: {{albumTitle}}\nGenre: {{genre}}\nSong Count: {{songCount}}"
+      },
+      "output": {
+        "saveAs": "albumPlan",
+        "format": "json"
+      }
+    },
+    {
+      "id": "lyricist",
+      "type": "loop",
+      "forEach": "albumPlan",
+      "steps": [
+        {
+          "id": "lyrics",
+          "type": "prompt",
+          "prompt": {
+            "role": "You are a world-class songwriter.",
+            "task": "Write lyrics for the song: {{item.title}}",
+            "instructions": [
+              "Mood: {{item.mood}}",
+              "Genre: {{genre}}",
+              "Album: {{albumTitle}}",
+              "Song {{index}} of {{songCount}}"
+            ]
+          },
+          "output": {
+            "directory": "./outputs/albums/{{slugify:albumTitle}}",
+            "fileNameTemplate": "{{index}}-{{slugify:item.title}}",
+            "extension": ".md"
+          }
+        }
+      ]
+    }
+  ]
+}

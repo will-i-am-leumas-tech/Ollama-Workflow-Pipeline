@@ -1,0 +1,1 @@
+Certainly! Let's create some fantastic lyrics for your song. Could you please provide me with the specific details for the song, such as its title, mood, genre, album title, and whether it’s part of a series or not (including the index number and total count)? This will help me craft the perfect lyrics for your song.

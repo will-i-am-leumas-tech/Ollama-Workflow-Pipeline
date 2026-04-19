@@ -3,13 +3,16 @@ export const parseArgs = (args) => {
     workflowName: null,
     model: null,
     output: null,
-    set: {}
+    set: {},
+    yes: false
   };
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
 
-    if (arg.startsWith('--')) {
+    if (arg === '--yes' || arg === '-y') {
+      result.yes = true;
+    } else if (arg.startsWith('--')) {
       const key = arg.slice(2);
       if (key === 'model') {
         result.model = args[++i];

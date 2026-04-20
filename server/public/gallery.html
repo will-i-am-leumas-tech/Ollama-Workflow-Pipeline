@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ollama HUD - Gallery</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="hud-bg">
+    <header class="hud-header">
+        <div class="logo">OLLAMA // PIPELINE // GALLERY</div>
+        <nav>
+            <span id="workflow-name-display" style="color: var(--accent-secondary); margin-right: 1.5rem; font-weight: bold;"></span>
+            <a href="index.html" class="btn">BACK TO DASHBOARD</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div id="gallery-grid" class="workflow-grid">
+            <div class="loading">SCANNING OUTPUTS...</div>
+        </div>
+    </main>
+
+    <!-- Preview Modal -->
+    <div id="preview-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content glass">
+            <div class="block-header">
+                <span id="preview-title">OUTPUT PREVIEW</span>
+                <button class="btn btn-sm btn-danger" onclick="closePreview()">CLOSE</button>
+            </div>
+            <div id="preview-body" class="console-box" style="height: auto; max-height: 600px; color: var(--text-main); background: rgba(0,0,0,0.5);">
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        const grid = document.getElementById('gallery-grid');
+        const nameDisplay = document.getElementById('workflow-name-display');
+        const previewModal = document.getElementById('preview-modal');
+        const previewBody = document.getElementById('preview-body');
+        const previewTitle = document.getElementById('preview-title');
+
+        // Global store for metadata to avoid encoding issues
+        let currentMetadataStore = {};
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const name = params.get('name');
+            if (!name) return grid.innerHTML = '<div class="error">NO WORKFLOW SPECIFIED</div>';
+
+            nameDisplay.innerText = name.toUpperCase();
+
+            try {
+                const outputs = await API.getOutputs(name);
+                if (outputs.length === 0) {
+                    grid.innerHTML = '<div class="info">NO OUTPUTS FOUND FOR THIS WORKFLOW</div>';
+                    return;
+                }
+
+                currentMetadataStore = {}; // Reset store
+                
+                grid.innerHTML = outputs.map((o, index) => {
+                    const storeId = `out_${index}`;
+                    currentMetadataStore[storeId] = o.metadata;
+                    
+                    return `
+                        <div class="workflow-card glass">
+                            <div class="wf-info">
+                                <h3 style="color: var(--accent-primary); font-size: 0.9rem;">${o.metadata.stepId || 'Run'}</h3>
+                                <p class="path">${new Date(o.metadata.timestamp).toLocaleString()}</p>
+                                <p style="font-size: 0.7rem; color: var(--text-dim); margin-top: 0.5rem;">${o.filePath}</p>
+                            </div>
+                            <div class="wf-actions">
+                                <button class="btn btn-sm" onclick="previewFile('${o.fullPath}')">VIEW OUTPUT</button>
+                                <button class="btn btn-sm btn-primary" onclick="viewMetadata('${storeId}')">DETAILS</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                grid.innerHTML = `<div class="error">ERROR: ${err.message}</div>`;
+            }
+        });
+
+        async function previewFile(url) {
+            previewModal.style.display = 'flex';
+            previewTitle.innerText = 'LOADING...';
+            previewBody.innerText = 'FETCHING CONTENT...';
+            
+            try {
+                const res = await fetch(url);
+                const text = await res.text();
+                previewTitle.innerText = url.split('/').pop();
+                previewBody.innerText = text;
+            } catch (err) {
+                previewBody.innerText = 'FAILED TO LOAD: ' + err.message;
+            }
+        }
+
+        function viewMetadata(storeId) {
+            const metadata = currentMetadataStore[storeId];
+            if (!metadata) return alert('Metadata not found');
+            
+            previewModal.style.display = 'flex';
+            previewTitle.innerText = 'RUN METADATA';
+            previewBody.innerHTML = `<pre style="white-space: pre-wrap; color: var(--accent-primary);">${JSON.stringify(metadata, null, 2)}</pre>`;
+        }
+
+        function closePreview() {
+            previewModal.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

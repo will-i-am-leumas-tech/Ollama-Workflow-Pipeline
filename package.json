@@ -6,7 +6,8 @@
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
-    "workflow": "node runWorkflow.js"
+    "workflow": "node runWorkflow.js",
+    "server": "node server/server.js"
   },
   "dependencies": {
     "inquirer": "^9.2.16",

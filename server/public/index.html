@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ollama HUD - Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="hud-bg">
+    <header class="hud-header">
+        <div class="logo">OLLAMA // PIPELINE // HUD</div>
+        <nav>
+            <a href="builder.html" class="btn btn-primary">+ NEW WORKFLOW</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="search-filter-bar glass" style="margin-bottom: 2rem; display: flex; gap: 1rem; align-items: center;">
+            <div style="flex: 1;">
+                <input type="text" id="wf-search" placeholder="Search by name, path, or output content..." style="width: 100%;">
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <label style="font-size: 0.7rem; color: var(--text-dim); white-space: nowrap;">MIN RUNS:</label>
+                <input type="number" id="wf-min-runs" value="0" style="width: 60px;">
+            </div>
+            <button class="btn btn-sm" onclick="renderGallery()" style="border-color: var(--accent-primary);">FILTER</button>
+        </section>
+
+        <section class="workflow-grid" id="workflow-list">
+            <!-- Workflows will be loaded here -->
+            <div class="loading">SCANNING WORKFLOWS...</div>
+        </section>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script>
+        let allWorkflows = [];
+        const list = document.getElementById('workflow-list');
+        const searchInput = document.getElementById('wf-search');
+        const minRunsInput = document.getElementById('wf-min-runs');
+
+        // Favorites state
+        let favorites = JSON.parse(localStorage.getItem('ollama_favorites') || '[]');
+
+        function toggleStar(path) {
+            if (favorites.includes(path)) {
+                favorites = favorites.filter(p => p !== path);
+            } else {
+                favorites.push(path);
+            }
+            localStorage.setItem('ollama_favorites', JSON.stringify(favorites));
+            renderGallery();
+        }
+
+        async function renderGallery() {
+            const query = searchInput.value.toLowerCase();
+            const minRuns = parseInt(minRunsInput.value) || 0;
+
+            let filtered = allWorkflows.filter(w => {
+                const matchesSearch = w.name.toLowerCase().includes(query) || 
+                                    w.path.toLowerCase().includes(query);
+                const matchesRuns = w.outputCount >= minRuns;
+                return matchesSearch && matchesRuns;
+            });
+
+            // Sort: Stars first, then by name
+            filtered.sort((a, b) => {
+                const aStar = favorites.includes(a.path);
+                const bStar = favorites.includes(b.path);
+                if (aStar && !bStar) return -1;
+                if (!aStar && bStar) return 1;
+                return a.name.localeCompare(b.name);
+            });
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="info">NO WORKFLOWS MATCHING CRITERIA</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(w => {
+                const isStarred = favorites.includes(w.path);
+                return `
+                    <div class="workflow-card glass ${isStarred ? 'starred' : ''}">
+                        <div class="wf-info">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <h3>${w.name}</h3>
+                                <span class="star-icon" onclick="toggleStar('${w.path}')">${isStarred ? '★' : '☆'}</span>
+                            </div>
+                            <p class="path">${w.path}</p>
+                        </div>
+                        <div class="wf-actions">
+                            <a href="gallery.html?name=${encodeURIComponent(w.name)}" class="btn btn-sm" style="border-color: var(--accent-secondary); color: var(--accent-secondary); position: relative;">
+                                GALLERY
+                                ${w.outputCount > 0 ? `<span class="badge">${w.outputCount}</span>` : ''}
+                            </a>
+                            <a href="builder.html?path=${encodeURIComponent(w.path)}" class="btn btn-sm">EDIT</a>
+                            <button class="btn btn-sm btn-danger" onclick="deleteWorkflow('${w.path}')">DEL</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                allWorkflows = await API.getWorkflows();
+                renderGallery();
+            } catch (err) {
+                list.innerHTML = `<div class="error">ERROR: ${err.message}</div>`;
+            }
+
+            searchInput.addEventListener('input', renderGallery);
+            minRunsInput.addEventListener('input', renderGallery);
+        });
+
+        async function deleteWorkflow(path) {
+            if (confirm(`Delete ${path}?`)) {
+                await API.deleteWorkflow(path);
+                allWorkflows = allWorkflows.filter(w => w.path !== path);
+                renderGallery();
+            }
+        }
+    </script>
+</body>
+</html>

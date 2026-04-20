@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ollama HUD - Builder</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="hud-bg">
+    <header class="hud-header">
+        <div class="logo">OLLAMA // WORKFLOW // BUILDER</div>
+        <nav>
+            <button class="btn btn-primary" onclick="openRunModal()" style="border-color: var(--accent-secondary); color: var(--accent-secondary); margin-right: 1rem;">RUN WORKFLOW</button>
+            <button class="btn btn-primary" onclick="saveWorkflow()">SAVE CHANGES</button>
+            <a href="index.html" class="btn">EXIT</a>
+        </nav>
+    </header>
+
+    <div class="builder-layout">
+        <aside class="sidebar">
+            <div class="form-group">
+                <label>WORKFLOW PATH (e.g., custom/my-task.json)</label>
+                <input type="text" id="wf-path" placeholder="creative/new-workflow.json">
+            </div>
+            <div class="form-group">
+                <label>MODEL</label>
+                <input type="text" id="wf-model" value="llama3">
+            </div>
+            <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 1.5rem 0;">
+            <div id="questions-container">
+                <h4 style="margin-bottom: 1rem; color: var(--accent-primary);">USER QUESTIONS</h4>
+                <div id="questions-list"></div>
+                <button class="btn btn-sm" onclick="addQuestion()" style="width: 100%; margin-top: 1rem;">+ ADD QUESTION</button>
+            </div>
+        </aside>
+
+        <main class="canvas">
+            <h4 style="margin-bottom: 1.5rem; color: var(--accent-secondary);">PIPELINE STEPS</h4>
+            <div id="steps-list"></div>
+            
+            <div class="step-controls">
+                <button class="btn btn-primary" onclick="addStep('prompt')">+ ADD PROMPT STEP</button>
+                <button class="btn btn-primary" onclick="addStep('loop')">+ ADD LOOP STEP</button>
+                <button class="btn" onclick="generateWithAI(event)" style="border-color: var(--accent-secondary); color: var(--accent-secondary);">AUTO-GENERATE (AI)</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Templates for Blocks -->
+    <template id="question-template">
+        <div class="block glass question-block">
+            <div class="block-header">
+                <span>Question</span>
+                <button class="btn btn-sm btn-danger" onclick="this.closest('.block').remove()">X</button>
+            </div>
+            <div class="form-group">
+                <label>Variable Name</label>
+                <input type="text" class="q-name" placeholder="e.g., topic">
+            </div>
+            <div class="form-group">
+                <label>Message to User</label>
+                <input type="text" class="q-message" placeholder="What is the topic?">
+            </div>
+        </div>
+    </template>
+
+    <template id="step-template">
+        <div class="block glass step-block">
+            <div class="block-header">
+                <span class="step-type-label">Prompt Step</span>
+                <button class="btn btn-sm btn-danger" onclick="this.closest('.block').remove()">REMOVE</button>
+            </div>
+            <div class="form-group">
+                <label>Step Name</label>
+                <input type="text" class="s-name" placeholder="e.g., Generate Outline">
+            </div>
+            <div class="form-group">
+                <label>Prompt Template</label>
+                <textarea class="s-template" rows="4" placeholder="Use {{variables}} from questions..."></textarea>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="form-group">
+                    <label>Output Dir</label>
+                    <input type="text" class="s-outdir" placeholder="e.g., results/{{topic}}">
+                </div>
+                <div class="form-group">
+                    <label>Filename</label>
+                    <input type="text" class="s-filename" placeholder="e.g., outline.md">
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Run Modal -->
+    <div id="run-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content glass">
+            <div class="block-header" style="border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem; margin-bottom: 1rem;">
+                <span id="run-modal-title">RUN PIPELINE</span>
+                <button class="btn btn-sm btn-danger" onclick="closeRunModal()">CLOSE</button>
+            </div>
+            
+            <div id="run-inputs" class="run-section">
+                <h4 style="margin-bottom: 1rem; color: var(--accent-primary);">REQUIRED INPUTS</h4>
+                <div id="run-questions-list"></div>
+                <button class="btn btn-primary" onclick="startExecution()" style="width: 100%; margin-top: 1.5rem; font-size: 1.1rem;">EXECUTE PIPELINE</button>
+            </div>
+
+            <div id="run-status" class="run-section" style="display: none;">
+                <h4 style="margin-bottom: 1rem; color: var(--accent-secondary);">EXECUTION LOG</h4>
+                <div id="run-logs" class="console-box"></div>
+                <div id="run-results" style="margin-top: 1.5rem; display: none;">
+                    <h4 style="color: var(--accent-primary);">FINAL STATE / OUTPUTS</h4>
+                    <pre id="run-output-json" class="console-box" style="background: rgba(0,242,255,0.05); height: auto; max-height: 300px;"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-content { 
+            width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto;
+            border: 1px solid var(--accent-primary);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
+        }
+        .run-section { margin-bottom: 1rem; }
+        .console-box {
+            background: #000; color: #0f0; padding: 1rem; border-radius: 4px;
+            font-size: 0.85rem; height: 250px; overflow-y: auto; border: 1px solid var(--glass-border);
+            font-family: 'Courier New', Courier, monospace;
+            line-height: 1.4;
+        }
+        .log-entry { margin-bottom: 0.3rem; }
+        .log-info { color: #00f2ff; }
+        .log-error { color: #ff4d4d; font-weight: bold; }
+        .log-timestamp { color: #555; font-size: 0.7rem; margin-right: 0.5rem; }
+    </style>
+
+    <script src="js/api.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/builder.js"></script>
+</body>
+</html>

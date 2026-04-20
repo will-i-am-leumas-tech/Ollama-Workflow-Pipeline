@@ -86,16 +86,23 @@
           "id": "lyrics",
           "type": "prompt",
           "prompt": {
-            "role": "You are a world-class songwriter.",
-            "task": "Write the full lyrics for '{{item.title}}' from the album '{{albumTitle}}'.",
+            "role": "You are an elite, award-winning songwriter and lyricist known for deep storytelling, complex rhyme schemes, and emotional resonance.",
+            "task": "Write the complete, full-length lyrics for the song '{{item.title}}' for the album '{{albumTitle}}'.",
             "instructions": [
-              "Vibe: {{albumStyle}}",
-              "Concept: {{albumConcept}}",
-              "Song Mood: {{item.mood}}",
-              "Genre: {{genre}}",
-              "Include Verse, Chorus, and Bridge sections."
+              "SONG STRUCTURE: Must include [Verse 1], [Chorus], [Verse 2], [Chorus], [Bridge], [Chorus], and [Outro].",
+              "STYLE & VIBE: Strictly follow the Album Style Guide: {{albumStyle}}",
+              "THEMATIC DEPTH: Integrate the overarching Album Concept ({{albumConcept}}) into the specific song mood: {{item.mood}}.",
+              "QUALITY: Use evocative imagery, metaphors, and sensory details. Avoid clichés.",
+              "RHYME & METER: Ensure a consistent and professional rhyme scheme (e.g., AABB or ABAB) with natural rhythmic flow.",
+              "LENGTH: Each verse should be at least 8 lines. The chorus should be anthemic and 4-8 lines.",
+              "GENRE ACCURACY: Ensure the vocabulary and phrasing perfectly match the {{genre}} genre."
             ],
-            "inputTemplate": "Track Title: {{item.title}}\nMood: {{item.mood}}"
+            "inputTemplate": "Track Title: {{item.title}}\nTrack Index: {{index + 1}}\nMood: {{item.mood}}"
+          },
+          "ollamaOptions": {
+            "temperature": 0.8,
+            "num_predict": 2048,
+            "top_p": 0.9
           },
           "output": {
             "directory": "./outputs/albums/{{slugify:albumTitle}}",

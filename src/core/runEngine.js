@@ -8,6 +8,7 @@ import { writeMetadata } from '../output/writeMetadata.js';
 import { getIsoTimestamp } from '../utils/timestamp.js';
 import { logger } from '../utils/logger.js';
 import { safeJsonParse } from '../utils/safeJson.js';
+import { executeTool } from './toolRegistry.js';
 
 export const runEngine = async (workflowName, options = {}) => {
   const {
@@ -66,8 +67,46 @@ export const runEngine = async (workflowName, options = {}) => {
           const loopContext = { ...currentContext, item, index };
           await executeSteps(step.steps, loopContext);
         }
+      } else if (step.type === 'tool') {
+        logger.info(`Running tool: ${step.tool}...`);
+        
+        // Render all parameters recursively
+        const renderParams = (obj) => {
+          if (typeof obj === 'string') return renderTemplate(obj, currentContext);
+          if (Array.isArray(obj)) return obj.map(renderParams);
+          if (typeof obj === 'object' && obj !== null) {
+            const result = {};
+            for (const key in obj) result[key] = renderParams(obj[key]);
+            return result;
+          }
+          return obj;
+        };
+
+        const renderedParams = renderParams(step.params || {});
+        
+        try {
+          const result = await executeTool(step.tool, renderedParams, currentContext);
+          
+          // Save to state
+          if (step.id) currentContext[step.id] = result;
+          
+          // Save to file if output config exists
+          const outputConfig = step.output;
+          if (outputConfig && outputConfig.fileNameTemplate) {
+             const outputDirRaw = outputDirOverride || outputConfig.directory || './outputs';
+             const outputDir = renderTemplate(outputDirRaw, currentContext);
+             const fileName = renderTemplate(outputConfig.fileNameTemplate, currentContext);
+             const outputPath = buildOutputPath(outputDir, fileName, outputConfig.extension);
+             
+             const fileContent = typeof result === 'object' ? JSON.stringify(result, null, 2) : String(result);
+             await writeResult(outputPath, fileContent);
+             logger.success(`Tool output saved to: ${outputPath}`);
+          }
+        } catch (error) {
+          logger.error(`Tool "${step.tool}" failed: ${error.message}`);
+          if (step.id) currentContext[step.id] = { error: error.message };
+        }
       } else if (step.type === 'prompt' || !step.type) {
-        // Default to prompt if type is missing (for backward compatibility)
         const prompt = buildPrompt(step.prompt || workflow, currentContext);
         const systemPrompt = step.systemPrompt || workflow.systemPrompt || '';
         const ollamaOptions = step.ollamaOptions || workflow.ollamaOptions || {};
@@ -106,13 +145,11 @@ export const runEngine = async (workflowName, options = {}) => {
         // Parse JSON if needed
         let finalResult = result;
         if (outputConfig.format === 'json') {
-          // Extract JSON from potential Markdown blocks
           const jsonMatch = result.match(/```json\n([\s\S]*?)\n```/) || result.match(/```([\s\S]*?)```/);
           const rawJson = jsonMatch ? jsonMatch[1] : result;
           finalResult = safeJsonParse(rawJson, result);
         }
 
-        // Save to state
         if (step.id) {
           currentContext[step.id] = finalResult;
         }
@@ -120,7 +157,6 @@ export const runEngine = async (workflowName, options = {}) => {
           currentContext[outputConfig.saveAs] = finalResult;
         }
 
-        // Only write to file if a fileNameTemplate is provided
         if (outputConfig.fileNameTemplate) {
           await writeResult(outputPath, typeof finalResult === 'string' ? finalResult : JSON.stringify(finalResult, null, 2));
           
@@ -144,7 +180,6 @@ export const runEngine = async (workflowName, options = {}) => {
   if (workflow.steps) {
     await executeSteps(workflow.steps, internalState);
   } else {
-    // Legacy support for single prompt workflows
     const legacyStep = {
       id: 'main',
       type: 'prompt',

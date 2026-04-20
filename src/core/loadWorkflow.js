@@ -15,9 +15,10 @@ const findFile = async (dir, fileName) => {
   return null;
 };
 
-export const loadWorkflow = async (workflowName) => {
+export const loadWorkflow = async (workflowName, workflowsDir = 'workflows') => {
+  const baseDir = path.resolve(workflowsDir);
   // Try direct path first (e.g. "dev/generate-goal-md")
-  let workflowPath = path.resolve('workflows', `${workflowName}.json`);
+  let workflowPath = path.resolve(baseDir, `${workflowName}.json`);
   
   try {
     const content = await fs.readFile(workflowPath, 'utf8');
@@ -29,7 +30,7 @@ export const loadWorkflow = async (workflowName) => {
     if (error.code === 'ENOENT') {
       // Fallback: search all subdirectories for just the fileName
       const baseFileName = path.basename(workflowName) + '.json';
-      const foundPath = await findFile(path.resolve('workflows'), baseFileName);
+      const foundPath = await findFile(baseDir, baseFileName);
       if (foundPath) {
         const content = await fs.readFile(foundPath, 'utf8');
         const workflow = JSON.parse(content);
@@ -37,7 +38,7 @@ export const loadWorkflow = async (workflowName) => {
         if (!valid) throw new Error(`Invalid workflow "${workflowName}":\n${errors.join('\n')}`);
         return workflow;
       }
-      throw new Error(`Workflow "${workflowName}" not found in "workflows" directory.`);
+      throw new Error(`Workflow "${workflowName}" not found in "${workflowsDir}" directory.`);
     }
     throw error;
   }

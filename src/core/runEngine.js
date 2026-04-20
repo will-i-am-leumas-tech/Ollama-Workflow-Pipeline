@@ -16,11 +16,12 @@ export const runEngine = async (workflowName, options = {}) => {
     confirmRunFn,
     ollamaAdapter,
     outputDirOverride,
-    modelOverride
+    modelOverride,
+    workflowsDir = 'workflows'
   } = options;
 
   logger.info(`Loading workflow: ${workflowName}`);
-  const workflow = await loadWorkflow(workflowName);
+  const workflow = await loadWorkflow(workflowName, workflowsDir);
   
   const { resolved, missing } = resolveAnswers(workflow.questions, cliAnswers);
   let finalAnswers = { ...resolved };

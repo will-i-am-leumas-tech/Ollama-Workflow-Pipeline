@@ -20,17 +20,22 @@ const API = {
         return res.json();
     },
 
-    async runWorkflow(path, answers) {
+    async runWorkflow(path, answers, model) {
         const res = await fetch('/api/workflows/run', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ path, answers })
+            body: JSON.stringify({ path, answers, model })
         });
         return res.json();
     },
 
     async getOutputs(workflowName) {
         const res = await fetch(`/api/workflows/outputs?workflowName=${encodeURIComponent(workflowName)}`);
+        return res.json();
+    },
+
+    async getModels() {
+        const res = await fetch('/api/ai/models');
         return res.json();
     }
 };

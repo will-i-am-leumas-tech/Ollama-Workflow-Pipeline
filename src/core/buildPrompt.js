@@ -5,15 +5,18 @@ export const buildPrompt = (promptSource, answers) => {
   const sections = [];
 
   if (prompt.role) {
-    sections.push(`ROLE:\n${prompt.role}`);
+    sections.push(`ROLE:\n${renderTemplate(prompt.role, answers)}`);
   }
 
   if (prompt.task) {
-    sections.push(`TASK:\n${prompt.task}`);
+    sections.push(`TASK:\n${renderTemplate(prompt.task, answers)}`);
   }
 
   if (prompt.instructions && Array.isArray(prompt.instructions)) {
-    sections.push(`INSTRUCTIONS:\n${prompt.instructions.map(i => `- ${i}`).join('\n')}`);
+    const renderedInstructions = prompt.instructions
+      .map(i => `- ${renderTemplate(i, answers)}`)
+      .join('\n');
+    sections.push(`INSTRUCTIONS:\n${renderedInstructions}`);
   }
 
   if (prompt.inputTemplate) {

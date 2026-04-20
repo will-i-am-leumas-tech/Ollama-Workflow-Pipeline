@@ -1,9 +1,11 @@
 const questionsList = document.getElementById('questions-list');
 const stepsList = document.getElementById('steps-list');
 const wfPathInput = document.getElementById('wf-path');
-const wfModelInput = document.getElementById('wf-model');
+const wfModelSelect = document.getElementById('wf-model');
+const runModelSelect = document.getElementById('run-model');
 
 // State
+let availableModels = [];
 let currentWorkflow = {
     model: 'llama3',
     questions: [],
@@ -12,6 +14,19 @@ let currentWorkflow = {
 
 // Initialization
 document.addEventListener('DOMContentLoaded', async () => {
+    // Fetch models first
+    try {
+        availableModels = await API.getModels();
+        const options = availableModels.map(m => `<option value="${m}">${m}</option>`).join('');
+        wfModelSelect.innerHTML = options;
+        runModelSelect.innerHTML = options;
+    } catch (err) {
+        console.error('Failed to fetch models', err);
+        const fallback = '<option value="llama3">llama3</option>';
+        wfModelSelect.innerHTML = fallback;
+        runModelSelect.innerHTML = fallback;
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
     const path = urlParams.get('path');
     
@@ -29,7 +44,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function loadWorkflowIntoUI(wf) {
     currentWorkflow = wf;
-    wfModelInput.value = wf.model || 'llama3';
+    if (wf.model && availableModels.includes(wf.model)) {
+        wfModelSelect.value = wf.model;
+    }
     
     questionsList.innerHTML = '';
     stepsList.innerHTML = '';
@@ -72,7 +89,8 @@ async function saveWorkflow() {
     if (!path) return alert('Please specify a workflow path');
     
     const workflow = {
-        model: wfModelInput.value,
+        name: currentWorkflow.name || path.split('/').pop().replace('.json', ''),
+        model: wfModelSelect.value,
         questions: [],
         steps: []
     };
@@ -122,6 +140,11 @@ function openRunModal() {
     runStatus.style.display = 'none';
     runQuestionsList.innerHTML = '';
     
+    // Set default model for run to what's in the workflow
+    if (availableModels.includes(wfModelSelect.value)) {
+        runModelSelect.value = wfModelSelect.value;
+    }
+
     // Generate input fields based on workflow questions
     document.querySelectorAll('.question-block').forEach(block => {
         const name = block.querySelector('.q-name').value;
@@ -151,13 +174,15 @@ async function startExecution() {
         answers[input.dataset.name] = input.value;
     });
 
+    const modelOverride = runModelSelect.value;
+
     runInputs.style.display = 'none';
     runStatus.style.display = 'block';
     runLogs.innerHTML = '<div class="log-entry log-info">Initializing execution...</div>';
     runResults.style.display = 'none';
 
     try {
-        const response = await API.runWorkflow(path, answers);
+        const response = await API.runWorkflow(path, answers, modelOverride);
         
         // Display Logs
         if (response.logs) {

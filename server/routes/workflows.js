@@ -140,7 +140,7 @@ router.get('/delete', async (req, res) => {
 });
 
 router.post('/run', async (req, res) => {
-  const { path: relPath, answers } = req.body;
+  const { path: relPath, answers, model } = req.body;
   if (!relPath) return res.status(400).json({ error: 'Workflow path required' });
 
   const logs = [];
@@ -164,6 +164,7 @@ router.post('/run', async (req, res) => {
     const result = await runEngine(workflowName, {
       cliAnswers: answers,
       ollamaAdapter: ollamaAdapter,
+      modelOverride: model,
       // No askQuestionsFn or confirmRunFn to keep it automated for the HUD
     });
 

@@ -15,6 +15,19 @@ app.use('/outputs', express.static(path.join(__dirname, '../outputs')));
 
 app.use('/api/workflows', workflowRoutes);
 
+// Get available Ollama models
+app.get('/api/ai/models', async (req, res) => {
+  try {
+    const response = await fetch('http://localhost:11434/api/tags');
+    const data = await response.json();
+    // Return only names
+    const models = (data.models || []).map(m => m.name);
+    res.json(models);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch models' });
+  }
+});
+
 app.post('/api/ai/generate', async (req, res) => {
   const { prompt } = req.body;
   try {

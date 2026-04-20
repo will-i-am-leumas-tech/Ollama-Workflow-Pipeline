@@ -24,7 +24,7 @@
             </div>
             <div class="form-group">
                 <label>MODEL</label>
-                <input type="text" id="wf-model" value="llama3">
+                <select id="wf-model"></select>
             </div>
             <hr style="border: 0; border-top: 1px solid var(--glass-border); margin: 1.5rem 0;">
             <div id="questions-container">
@@ -100,6 +100,8 @@
             </div>
             
             <div id="run-inputs" class="run-section">
+                <h4 style="margin-bottom: 1rem; color: var(--accent-primary);">RUN-TIME MODEL</h4>
+                <select id="run-model" style="margin-bottom: 1.5rem;"></select>
                 <h4 style="margin-bottom: 1rem; color: var(--accent-primary);">REQUIRED INPUTS</h4>
                 <div id="run-questions-list"></div>
                 <button class="btn btn-primary" onclick="startExecution()" style="width: 100%; margin-top: 1.5rem; font-size: 1.1rem;">EXECUTE PIPELINE</button>

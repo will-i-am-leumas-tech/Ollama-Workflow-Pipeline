@@ -1,6 +1,6 @@
 {
   "name": "album-generator",
-  "description": "Plan an album and generate lyrics for all songs.",
+  "description": "Generate a visual style, plan a concept, create a tracklist, and write lyrics for all songs.",
   "recommendedModel": "llama3",
   "questions": [
     {
@@ -21,44 +21,85 @@
   ],
   "steps": [
     {
-      "id": "planner",
+      "id": "style_generator",
+      "type": "prompt",
+      "prompt": {
+        "role": "You are a creative music director and visual artist.",
+        "task": "Define a unique visual and sonic 'Style Guide' for the album '{{albumTitle}}' within the {{genre}} genre.",
+        "instructions": [
+          "Describe the color palette, the musical texture (e.g., lo-fi, orchestral, industrial), and the overall vibe.",
+          "Keep the description under 150 words."
+        ],
+        "inputTemplate": "Album: {{albumTitle}}\nGenre: {{genre}}"
+      },
+      "output": {
+        "directory": "./outputs/albums/{{slugify:albumTitle}}",
+        "fileNameTemplate": "00-style-guide",
+        "extension": ".md",
+        "saveAs": "albumStyle"
+      }
+    },
+    {
+      "id": "concept_generator",
+      "type": "prompt",
+      "prompt": {
+        "role": "You are a world-class concept artist and storyteller.",
+        "task": "Using the style guide provided, create a compelling overarching theme and emotional journey for '{{albumTitle}}'.",
+        "instructions": [
+          "Describe the story the album tells from the first song to the last.",
+          "Provide a 2-paragraph summary."
+        ],
+        "inputTemplate": "Style Guide: {{style_generator}}\nAlbum Title: {{albumTitle}}"
+      },
+      "output": {
+        "directory": "./outputs/albums/{{slugify:albumTitle}}",
+        "fileNameTemplate": "01-album-concept",
+        "extension": ".md",
+        "saveAs": "albumConcept"
+      }
+    },
+    {
+      "id": "tracklist_planner",
       "type": "prompt",
       "prompt": {
         "role": "You are a professional music producer.",
-        "task": "Plan an album with {{songCount}} songs. Return a JSON array of objects with 'title' and 'mood' keys.",
+        "task": "Based on the Style and Concept for '{{albumTitle}}', generate a list of {{songCount}} song titles and their individual moods.",
         "instructions": [
-          "Return ONLY valid JSON.",
-          "Do not include any other text.",
-          "Format: [{\"title\": \"...\", \"mood\": \"...\"}, ...]"
+          "Ensure the songs follow the emotional journey.",
+          "Return ONLY a raw JSON array of objects.",
+          "Format: [{\"title\": \"Song Name\", \"mood\": \"Mood description\"}, ...]",
+          "CRITICAL: No markdown, no conversational text. Only the JSON array."
         ],
-        "inputTemplate": "Album Title: {{albumTitle}}\nGenre: {{genre}}\nSong Count: {{songCount}}"
+        "inputTemplate": "Concept: {{concept_generator}}\nSong Count: {{songCount}}"
       },
       "output": {
-        "saveAs": "albumPlan",
+        "saveAs": "trackList",
         "format": "json"
       }
     },
     {
-      "id": "lyricist",
+      "id": "songwriter_loop",
       "type": "loop",
-      "forEach": "albumPlan",
+      "forEach": "trackList",
       "steps": [
         {
           "id": "lyrics",
           "type": "prompt",
           "prompt": {
             "role": "You are a world-class songwriter.",
-            "task": "Write lyrics for the song: {{item.title}}",
+            "task": "Write the full lyrics for '{{item.title}}' from the album '{{albumTitle}}'.",
             "instructions": [
-              "Mood: {{item.mood}}",
+              "Vibe: {{albumStyle}}",
+              "Concept: {{albumConcept}}",
+              "Song Mood: {{item.mood}}",
               "Genre: {{genre}}",
-              "Album: {{albumTitle}}",
-              "Song {{index}} of {{songCount}}"
-            ]
+              "Include Verse, Chorus, and Bridge sections."
+            ],
+            "inputTemplate": "Track Title: {{item.title}}\nMood: {{item.mood}}"
           },
           "output": {
             "directory": "./outputs/albums/{{slugify:albumTitle}}",
-            "fileNameTemplate": "{{index}}-{{slugify:item.title}}",
+            "fileNameTemplate": "{{index + 1}}-{{slugify:item.title}}",
             "extension": ".md"
           }
         }
